@@ -2,61 +2,46 @@ plugins {
     id 'java'
 }
 
-group = 'com.automation'
-version = '1.0'
-
 repositories {
     mavenCentral()
 }
 
 dependencies {
-
-    // Cucumber
     testImplementation 'io.cucumber:cucumber-java:7.14.0'
     testImplementation 'io.cucumber:cucumber-testng:7.14.0'
-
-    // TestNG
+    testImplementation 'io.cucumber:cucumber-picocontainer:7.14.0'
     testImplementation 'org.testng:testng:7.10.2'
-
-    // API
     testImplementation 'io.rest-assured:rest-assured:5.5.0'
-
-    // Selenium
     testImplementation 'org.seleniumhq.selenium:selenium-java:4.29.0'
-
-    // Report
     testImplementation 'net.masterthought:cucumber-reporting:5.8.4'
 }
 
-//test {
-//    useTestNG()
-//}
-
 test {
     useTestNG()
-
-    testLogging {
-        events "passed", "failed", "skipped"
-        showStandardStreams = true
-    }
+    enabled = false
 }
 
-tasks.register("apiTest", Test) {
-
-    useTestNG()
-
-    systemProperty(
-            "cucumber.filter.tags",
-            "@api"
-    )
+tasks.register("apiTest", JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'io.cucumber.core.cli.Main'
+    args = [
+            'src/test/resources/features/api',
+            '--glue', 'api.stepdefinitions',
+            '--plugin', 'pretty',
+            '--plugin', 'html:reports/api-report.html',
+            '--plugin', 'json:reports/api-report.json'
+    ]
 }
 
-tasks.register("webTest", Test) {
-
-    useTestNG()
-
-    systemProperty(
-            "cucumber.filter.tags",
-            "@web"
-    )
+tasks.register("webTest", JavaExec) {
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'io.cucumber.core.cli.Main'
+    args = [
+            'src/test/resources/features/web',
+            '--glue', 'web.stepdefinitions',
+            '--glue', 'web.hooks',
+            '--plugin', 'pretty',
+            '--plugin', 'html:reports/web-report.html',
+            '--plugin', 'json:reports/web-report.json'
+    ]
 }

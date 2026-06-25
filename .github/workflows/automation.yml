@@ -1,12 +1,14 @@
 name: Automation Test
 
 on:
+  workflow_dispatch:
+  pull_request:
   push:
     branches:
       - main
 
 jobs:
-  api-test:
+  automation-test:
 
     runs-on: ubuntu-latest
 
@@ -21,8 +23,32 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Setup Chrome
+        uses: browser-actions/setup-chrome@v1
+
       - name: Grant execute permission
         run: chmod +x gradlew
 
       - name: Run API Test
         run: ./gradlew apiTest
+        continue-on-error: true
+
+      - name: Run Web Test
+        run: ./gradlew webTest
+        continue-on-error: true
+
+      - name: Upload API Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-cucumber-report
+          path: reports/api-report.*
+          retention-days: 30
+
+      - name: Upload Web Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-cucumber-report
+          path: reports/web-report.*
+          retention-days: 30

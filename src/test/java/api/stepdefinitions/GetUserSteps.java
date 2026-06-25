@@ -1,14 +1,16 @@
 package api.stepdefinitions;
 
 import io.cucumber.java.en.*;
-import io.restassured.response.Response;
-
 import static io.restassured.RestAssured.*;
 
 public class GetUserSteps {
 
-    Response response;
+    private final SharedContext context;
     String userId;
+
+    public GetUserSteps(SharedContext context) {
+        this.context = context;
+    }
 
     @Given("user has valid user id")
     public void userHasValidUserId() {
@@ -17,26 +19,18 @@ public class GetUserSteps {
 
     @When("user sends GET request")
     public void userSendsGetRequest() {
-
-        response =
+        context.setResponse(
                 given()
-                        .header("app-id",
-                                "63a804408eb0cb069b57e43a")
+                        .header("app-id", "63a804408eb0cb069b57e43a")
                         .when()
-                        .get("https://dummyapi.io/data/v1/user/" + userId);
-    }
-
-    @Then("response status code should be 200")
-    public void responseStatusCodeShouldBe200() {
-        response.then().statusCode(200);
+                        .get("https://dummyapi.io/data/v1/user/" + userId)
+        );
     }
 
     @Then("response contains firstName")
     public void responseContainsFirstName() {
-
-        String firstName =
-                response.jsonPath().getString("firstName");
-
-        assert firstName != null;
+        String firstName = context.getResponse().jsonPath().getString("firstName");
+        System.out.println("firstName: " + firstName);
+        org.testng.Assert.assertNotNull(firstName);
     }
 }
