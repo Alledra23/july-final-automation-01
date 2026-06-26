@@ -31,6 +31,9 @@ public class ProductsPage {
         wait.until(ExpectedConditions
                         .elementToBeClickable(addToCartButton))
                 .click();
+
+        wait.until(ExpectedConditions
+                .visibilityOfElementLocated(removeButton));
     }
 
     public void removeProduct() {
