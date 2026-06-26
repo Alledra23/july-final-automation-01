@@ -14,7 +14,12 @@ public class GetUserSteps {
 
     @Given("user has valid user id")
     public void userHasValidUserId() {
-        userId = "60d0fe4f5311236168a109ca";
+        userId = given()
+                .header("app-id", "63a804408eb0cb069b57e43a")
+                .when()
+                .get("https://dummyapi.io/data/v1/user?limit=1")
+                .jsonPath()
+                .getString("data[0].id");
     }
 
     @When("user sends GET request")

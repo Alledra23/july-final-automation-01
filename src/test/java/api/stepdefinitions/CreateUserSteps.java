@@ -20,7 +20,7 @@ public class CreateUserSteps {
         requestBody = new HashMap<>();
         requestBody.put("firstName", "Ardella");
         requestBody.put("lastName", "Putra");
-        requestBody.put("email", "ardella@test.com");
+        requestBody.put("email", "ardella" + System.currentTimeMillis() + "@test.com");
     }
 
     @When("user sends POST request")

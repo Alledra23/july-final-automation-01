@@ -18,7 +18,20 @@ public class UpdateUserSteps {
 
     @Given("user has existing user id")
     public void userHasExistingUserId() {
-        userId = "60d0fe4f5311236168a109ca";
+        Map<String, String> newUser = new HashMap<>();
+        newUser.put("firstName", "Original");
+        newUser.put("lastName", "User");
+        newUser.put("email", "update" + System.currentTimeMillis() + "@test.com");
+
+        userId = given()
+                .header("app-id", "63a804408eb0cb069b57e43a")
+                .contentType("application/json")
+                .body(newUser)
+                .when()
+                .post("https://dummyapi.io/data/v1/user/create")
+                .jsonPath()
+                .getString("id");
+
         requestBody = new HashMap<>();
         requestBody.put("firstName", "UpdatedName");
     }
